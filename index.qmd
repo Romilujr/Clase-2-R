@@ -3,6 +3,8 @@ title: "index"
 author: "Romina"
 format: html
 editor: visual
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Quarto
@@ -24,4 +26,39 @@ You can add options to executable code like this
 2 * 2
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+# Instalar el paquete agricolae si no está instalado
+install.packages("agricolae")
+
+# Cargar el paquete
+library(agricolae)
+
+# Definir los niveles de fertilización (tratamientos)
+fertilizacion <- c(0, 50, 100, 150)
+
+# Definir el número de repeticiones
+reps <- 5
+
+# Crear el diseño completamente al azar (DCA)
+diseño_dca <- design.crd(trt = fertilizacion, r = reps, seed = 123)
+
+# Mostrar el diseño
+print(diseño_dca$book)
+
+# Opcional: exportar el diseño a un archivo CSV
+write.cs = v(diseño_dca$book, "diseño_experimental_dca_agricolae.csv", row.names = FALSE)
+
+##DBCA
+Factor=>variedades de papa: canchan y peruanita
+
+
+```{r}
+
+# factorial 4 x 2 with 5 blocks
+library(agricolae)
+trt<-c(4,2) # factorial 4x2
+outdesign <-design.ab(trt, r=4, serie=2)
+book<-outdesign$book
+book
+
+```
+
