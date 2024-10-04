@@ -1,0 +1,111 @@
+---
+title: "clase 2 R"
+author: "Romina"
+format: html
+editor: visual
+editor_options: 
+  chunk_output_type: console
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+
+library(readxl)
+fb2 <- read_excel("LA MOLINA 2014 POTATO WUE (FB).xlsx", 
+    sheet = "fb")
+View(fb2)
+
+
+```
+
+## Modelo estadistico 1
+
+```{r}
+modelo <- aov(formula = lfa ~ riego + geno + riego*geno + bloque, data = fb2)
+
+anova(modelo)
+
+
+```
+```{r}
+plot(mc)
+```
+
+
+##modelo estadistico 2
+
+```{r}
+
+modelo<-aov(formula = lfa ~ bloque + riego + geno + riego*geno, data = fb2)
+
+plot(modelo)
+
+
+
+anova(modelo)
+
+```
+
+## Comparacion de medias
+
+```{r}
+library(agricolae)
+
+mc<-agricolae::duncan.test(y=modelo,                                               , trt = c("riego","geno"))
+
+mc
+
+str(mc)
+
+```
+
+```{r}
+
+library(emmeans)
+library(multcomp)
+library(tidyverse)
+
+mc <-emmeans(modelo, ~ riego | geno) %>%
+    cld(letters=letters, reversed = T)
+mc
+```
+
+##Grafico
+```{r}
+library(inti)
+
+plot_smr(data = mc, type="bar", x="geno", y="emmean", sig=".group", error="SE", ylimits=c(0, 12000, 2000))
+
+
+
+
+```
+```{r}
+
+ggplot(mc,aes(x=geno,y=emmean,fill = riego)) + geom_bar(stat = "identity")+ theme_minimal()+ labs(title = "grafico de barras", x="categoria",y="valores")
+
+```
+
+
+
+
