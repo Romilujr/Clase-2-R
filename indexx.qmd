@@ -47,8 +47,9 @@ anova(modelo)
 
 
 ```
-```{r}
-plot(mc)
+
+
+
 ```
 
 
@@ -63,6 +64,8 @@ plot(modelo)
 
 
 anova(modelo)
+
+plot(modelo)
 
 ```
 
