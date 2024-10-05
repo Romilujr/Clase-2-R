@@ -1,10 +1,10 @@
 ---
-title: "index"
+title: "clase 2 R"
 author: "Romina"
 format: html
 editor: visual
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ## Quarto
@@ -26,39 +26,89 @@ You can add options to executable code like this
 2 * 2
 ```
 
-# Instalar el paquete agricolae si no está instalado
-install.packages("agricolae")
-
-# Cargar el paquete
-library(agricolae)
-
-# Definir los niveles de fertilización (tratamientos)
-fertilizacion <- c(0, 50, 100, 150)
-
-# Definir el número de repeticiones
-reps <- 5
-
-# Crear el diseño completamente al azar (DCA)
-diseño_dca <- design.crd(trt = fertilizacion, r = reps, seed = 123)
-
-# Mostrar el diseño
-print(diseño_dca$book)
-
-# Opcional: exportar el diseño a un archivo CSV
-write.cs = v(diseño_dca$book, "diseño_experimental_dca_agricolae.csv", row.names = FALSE)
-
-##DBCA
-Factor=>variedades de papa: canchan y peruanita
-
+The `echo: false` option disables the printing of code (only output is displayed).
 
 ```{r}
 
-# factorial 4 x 2 with 5 blocks
-library(agricolae)
-trt<-c(4,2) # factorial 4x2
-outdesign <-design.ab(trt, r=4, serie=2)
-book<-outdesign$book
-book
+library(readxl)
+fb2 <- read_excel("LA MOLINA 2014 POTATO WUE (FB).xlsx", 
+    sheet = "fb")
+View(fb2)
+
 
 ```
+
+## Modelo estadistico 1
+
+```{r}
+modelo <- aov(formula = lfa ~ riego + geno + riego*geno + bloque, data = fb2)
+
+anova(modelo)
+
+
+```
+
+
+
+```
+
+
+##modelo estadistico 2
+
+```{r}
+
+modelo<-aov(formula = lfa ~ bloque + riego + geno + riego*geno, data = fb2)
+
+plot(modelo)
+
+
+
+anova(modelo)
+
+plot(modelo)
+
+```
+
+## Comparacion de medias
+
+```{r}
+library(agricolae)
+
+mc<-agricolae::duncan.test(y=modelo,                                               , trt = c("riego","geno"))
+
+mc
+
+str(mc)
+
+```
+
+```{r}
+
+library(emmeans)
+library(multcomp)
+library(tidyverse)
+
+mc <-emmeans(modelo, ~ riego | geno) %>%
+    cld(letters=letters, reversed = T)
+mc
+```
+
+##Grafico
+```{r}
+library(inti)
+
+plot_smr(data = mc, type="bar", x="geno", y="emmean", sig=".group", error="SE", ylimits=c(0, 12000, 2000))
+
+
+
+
+```
+```{r}
+
+ggplot(mc,aes(x=geno,y=emmean,fill = riego)) + geom_bar(stat = "identity")+ theme_minimal()+ labs(title = "grafico de barras", x="categoria",y="valores")
+
+```
+
+
+
 
